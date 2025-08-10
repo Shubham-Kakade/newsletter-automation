@@ -1,0 +1,16 @@
+{
+  "name": "newsletter-generator-script",
+  "version": "1.0.0",
+  "description": "Generates and sends a newsletter.",
+  "main": "generate-newsletter.js",
+  "scripts": {
+    "start": "node generate-newsletter.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@google/generative-ai": "^0.2.1",
+    "nodemailer": "^6.9.12"
+  }
+}
