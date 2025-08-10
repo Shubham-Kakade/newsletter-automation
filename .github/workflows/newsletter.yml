@@ -1,0 +1,62 @@
+name: Generate and Deploy Newsletter
+
+on:
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+    # Add an input field for the prompt
+    inputs:
+      prompt:
+        description: 'The topic for the newsletter (e.g., "Latest AI trends")'
+        required: true
+        default: 'The most important AI trends this week'
+
+# Sets permissions for the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow only one concurrent deployment
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Generate Newsletter
+        run: node generate-newsletter.js
+        env:
+          # Pass the user's prompt from the input field to the script
+          NEWSLETTER_PROMPT: ${{ github.event.inputs.prompt }}
+          # Pass all the secrets to the script
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASS: ${{ secrets.SMTP_PASS }}
+          RECIPIENT_EMAILS: ${{ secrets.RECIPIENT_EMAILS }}
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+      
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './frontend'
+          
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
