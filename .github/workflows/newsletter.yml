@@ -1,3 +1,5 @@
+# This workflow generates and deploys the AI newsletter
+
 name: Generate and Deploy Newsletter
 
 on:
